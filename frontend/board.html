@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskManager — Board</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <h1>📋 TaskManager</h1>
+        <div class="navbar-right">
+            <span id="user-name"></span>
+            <button class="btn-secondary" onclick="window.location.href='dashboard.html'">← Dashboard</button>
+            <button class="btn-secondary" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Board Header -->
+    <div class="board-container">
+        <div class="board-header">
+            <div>
+                <h2 id="board-name" style="color:#f7fafc; font-size:1.4rem;"></h2>
+                <p id="team-name" style="color:#718096; font-size:0.9rem; margin-top:0.2rem;"></p>
+            </div>
+            <button class="btn-primary" style="width:auto; padding:0.6rem 1.2rem;" onclick="openModal('create-task-modal')">
+                + Add Task
+            </button>
+        </div>
+
+        <!-- Kanban Columns -->
+        <div class="columns">
+
+            <!-- Todo -->
+            <div class="column col-todo">
+                <div class="column-header">
+                    <span class="column-title">Todo</span>
+                    <span class="task-count" id="count-todo">0</span>
+                </div>
+                <div id="col-todo"></div>
+            </div>
+
+            <!-- In Progress -->
+            <div class="column col-progress">
+                <div class="column-header">
+                    <span class="column-title">In Progress</span>
+                    <span class="task-count" id="count-progress">0</span>
+                </div>
+                <div id="col-progress"></div>
+            </div>
+
+            <!-- Done -->
+            <div class="column col-done">
+                <div class="column-header">
+                    <span class="column-title">Done</span>
+                    <span class="task-count" id="count-done">0</span>
+                </div>
+                <div id="col-done"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Create Task Modal -->
+    <div id="create-task-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>Add New Task</h2>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="task-title" placeholder="e.g. Fix login bug">
+            </div>
+            <div class="form-group">
+                <label>Description (optional)</label>
+                <input type="text" id="task-desc" placeholder="More details...">
+            </div>
+            <div class="form-group">
+                <label>Priority</label>
+                <select id="task-priority" style="width:100%; padding:0.75rem; background:#0f1117; border:1px solid #2d3748; border-radius:8px; color:#f7fafc;">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Due Date (optional)</label>
+                <input type="date" id="task-due" style="color-scheme:dark;">
+            </div>
+            <div class="form-group">
+                <label>Assign To</label>
+                <select id="task-assign" style="width:100%; padding:0.75rem; background:#0f1117; border:1px solid #2d3748; border-radius:8px; color:#f7fafc;">
+                    <option value="">Unassigned</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="createTask()">Create Task</button>
+                <button class="btn-secondary" onclick="closeModal('create-task-modal')">Cancel</button>
+            </div>
+            <p id="create-task-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div id="task-detail-modal" class="modal-overlay">
+        <div class="modal">
+            <h2 id="detail-title"></h2>
+            <p id="detail-desc" style="color:#a0aec0; font-size:0.9rem; margin-bottom:1rem;"></p>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="detail-status" style="width:100%; padding:0.75rem; background:#0f1117; border:1px solid #2d3748; border-radius:8px; color:#f7fafc;">
+                    <option value="todo">Todo</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="done">Done</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Priority</label>
+                <select id="detail-priority" style="width:100%; padding:0.75rem; background:#0f1117; border:1px solid #2d3748; border-radius:8px; color:#f7fafc;">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="updateTask()">Save Changes</button>
+                <button class="btn-danger" onclick="deleteTask()">Delete</button>
+                <button class="btn-secondary" onclick="closeModal('task-detail-modal')">Cancel</button>
+            </div>
+            <p id="detail-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <script src="js/board.js"></script>
+</body>
+</html>

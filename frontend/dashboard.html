@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskManager — Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <h1>📋 TaskManager</h1>
+        <div class="navbar-right">
+            <span id="user-name"></span>
+            <button class="btn-secondary" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <div class="dashboard-container">
+
+        <!-- My Tasks Section -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h2 class="section-title">My Tasks</h2>
+        </div>
+        <div id="my-tasks" class="card">
+            <p style="color:#718096;">Loading...</p>
+        </div>
+
+        <!-- Teams Section -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin:2rem 0 1rem;">
+            <h2 class="section-title">My Teams</h2>
+            <button class="btn-secondary" onclick="openModal('create-team-modal')">+ New Team</button>
+        </div>
+        <div id="teams-grid" class="teams-grid">
+            <p style="color:#718096;">Loading...</p>
+        </div>
+
+    </div>
+
+    <!-- Create Team Modal -->
+    <div id="create-team-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>Create New Team</h2>
+            <div class="form-group">
+                <label>Team Name</label>
+                <input type="text" id="team-name" placeholder="e.g. Frontend Team">
+            </div>
+            <div class="form-group">
+                <label>Description (optional)</label>
+                <input type="text" id="team-desc" placeholder="What does this team work on?">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="createTeam()">Create Team</button>
+                <button class="btn-secondary" onclick="closeModal('create-team-modal')">Cancel</button>
+            </div>
+            <p id="create-team-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <!-- Invite Member Modal -->
+    <div id="invite-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>Invite Member</h2>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="invite-email" placeholder="teammate@example.com">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="invite-role" style="width:100%; padding:0.75rem; background:#0f1117; border:1px solid #2d3748; border-radius:8px; color:#f7fafc;">
+                    <option value="member">Member</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="inviteMember()">Send Invite</button>
+                <button class="btn-secondary" onclick="closeModal('invite-modal')">Cancel</button>
+            </div>
+            <p id="invite-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <!-- Create Board Modal -->
+    <div id="create-board-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>Create New Board</h2>
+            <div class="form-group">
+                <label>Board Name</label>
+                <input type="text" id="board-name" placeholder="e.g. Sprint 1">
+            </div>
+            <div class="form-group">
+                <label>Description (optional)</label>
+                <input type="text" id="board-desc" placeholder="What is this board for?">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="createBoard()">Create Board</button>
+                <button class="btn-secondary" onclick="closeModal('create-board-modal')">Cancel</button>
+            </div>
+            <p id="create-board-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

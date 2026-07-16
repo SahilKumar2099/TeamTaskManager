@@ -1,0 +1,54 @@
+TaskManager Project Summary
+
+Overview:
+TaskManager is a full-stack task management application built with a Node.js/Express backend, MongoDB via Mongoose, and a vanilla JavaScript frontend. It supports authentication, team collaboration, board organization, and task management.
+
+Core features:
+- User registration and login with JWT authentication
+- Create and manage teams with admin/member roles
+- Invite team members by email
+- Create boards under teams
+- Add tasks to boards with priority, due date, and status
+- Role-based access control: only admins can invite/remove members or delete teams
+- Safe team deletion: deleting a team removes its boards and related tasks
+
+Backend:
+- Express routes for authentication, teams, boards, and tasks
+- MongoDB data models for User, Team, Board, and Task
+- Middleware for token verification and protected routes
+- Server-side logic enforces membership and permission checks
+
+Frontend:
+- Dashboard interface for teams, boards, and tasks
+- Modals for creating teams, inviting members, and creating boards
+- Team cards with admin-only actions
+- JavaScript fetch calls to backend APIs with auth headers
+
+Important implementation details:
+- Teams include a members array with roles: "admin" or "member"
+- Admin users can delete a team; deletion cascades to remove all boards and tasks within that team
+- The frontend only shows delete controls to admins
+- API endpoints are protected so users can only access their teams and related resources
+- The project is built without a frontend framework, demonstrating fundamental DOM and fetch handling
+
+Interview talking points:
+1. Explain the overall architecture: frontend, backend, database, and how they connect.
+2. Describe the authentication flow using JWT and how the `verifyToken` middleware works.
+3. Highlight the team collaboration model: teams, members, roles, and permission checks.
+4. Discuss the data cleanup logic for deleting a team and why cascading deletes matter.
+5. Show how you handled frontend state and dynamic rendering using vanilla JavaScript.
+6. Mention any challenges and improvements: safe deletion, error handling, and admin-only UI controls.
+7. Describe how this project demonstrates your ability to build a complete CRUD application with authorization.
+
+Potential enhancements to discuss:
+- Add a dedicated modal or confirmation dialog for destructive actions
+- Add board/task search, filtering, or sorting
+- Add responsive styling or drag-and-drop board/task interaction
+- Add automated tests or end-to-end coverage
+- Add activity logs or notifications for team updates
+
+Why this project is strong for a CV:
+- It includes a full-stack technology stack
+- It demonstrates user management and access control
+- It shows how to model relationships between users, teams, boards, and tasks
+- It includes real-world collaboration concepts like invite workflows and admin permissions
