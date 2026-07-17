@@ -3,7 +3,7 @@ const API = (() => {
     if (host === 'localhost' || host === '127.0.0.1') {
         return 'http://localhost:5000/api';
     }
-    return '/api';
+    return 'https://taskmanager-backend.onrender.com/api';
 })();
 
 // Redirect if already logged in
