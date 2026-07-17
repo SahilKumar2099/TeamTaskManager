@@ -1,4 +1,10 @@
-const API = 'http://localhost:5000/api';
+const API = (() => {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+        return 'http://localhost:5000/api';
+    }
+    return '/api';
+})();
 
 // Redirect if already logged in
 if (localStorage.getItem('token')) {
