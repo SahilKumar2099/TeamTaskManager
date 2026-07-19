@@ -17,29 +17,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-let isConnected = false;
-
-async function connectDB() {
-    if (isConnected) return;
-    await mongoose.connect(process.env.MONGO_URI, {
-        serverSelectionTimeoutMS: 10000,
-        retryWrites: true,
-        w: 'majority',
-        appName: 'Cluster0'
-    });
-    isConnected = true;
-    console.log('✅ MongoDB connected');
-}
-
-app.use(async (req, res, next) => {
-    try {
-        await connectDB();
-        next();
-    } catch (err) {
-        console.error('❌ MongoDB error:', err.message);
-        res.status(500).json({ error: 'Database connection failed' });
-    }
-});
+const port = process.env.PORT || 5000;
 
 const authRoutes  = require('./routes/auth');
 const teamRoutes  = require('./routes/teams');
@@ -63,4 +41,19 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
-module.exports = app;
+mongoose.connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 10000,
+    retryWrites: true,
+    w: 'majority',
+    appName: 'Cluster0'
+})
+    .then(() => {
+        console.log('✅ MongoDB connected');
+        app.listen(port, '0.0.0.0', () => {
+            console.log(`🚀 Server running on http://0.0.0.0:${port}`);
+        });
+    })
+    .catch(err => {
+        console.error('❌ MongoDB error:', err.message);
+        process.exit(1);
+    });

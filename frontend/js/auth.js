@@ -6,10 +6,7 @@ const API = (() => {
     return 'https://taskmanager-backend.onrender.com';
 })();
 
-const AUTH_REGISTER_PATH = (() => {
-    const host = window.location.hostname;
-    return host === 'localhost' || host === '127.0.0.1' ? '/auth/register' : '/auth/signup';
-})();
+const AUTH_REGISTER_PATH = '/auth/register';
 
 // Redirect if already logged in
 if (localStorage.getItem('token')) {

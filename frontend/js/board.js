@@ -1,8 +1,8 @@
 const API = (() => {
     const host = window.location.hostname;
-    if (host === 'localhost' || host === '127.0.0.1') {
-        return 'http://localhost:5000/api';
-    }
+   if (host === 'localhost' || host === '127.0.0.1') {
+    return 'http://localhost:5000';
+}
     return 'https://taskmanager-backend.onrender.com';
 })();
 const token = localStorage.getItem('token');
