@@ -3,13 +3,20 @@ const API = (() => {
     if (host === 'localhost' || host === '127.0.0.1') {
         return 'http://localhost:5000/api';
     }
-    return 'https://taskmanager-backend.onrender.com/api';
+    return 'https://taskmanager-backend.onrender.com';
 })();
-const token = localStorage.getItem('token');
-const user  = JSON.parse(localStorage.getItem('user'));
+
+const token = (window.TaskManagerDashboardUtils?.getStoredToken(localStorage) || '').trim();
+const user = window.TaskManagerDashboardUtils?.getStoredUser(localStorage) || null;
 
 // Redirect if not logged in
-if (!token) window.location.href = 'index.html';
+if (!token) {
+    window.location.href = 'index.html';
+}
+
+function getDisplayName() {
+    return user?.name || 'User';
+}
 
 // Auth header helper
 const authHeaders = () => ({
@@ -17,12 +24,30 @@ const authHeaders = () => ({
     'Authorization': `Bearer ${token}`
 });
 
+const fetchWithFallback = async (paths, options = {}) => {
+    let lastError = null;
+    for (const path of paths) {
+        const url = `${API}${path.startsWith('/') ? path : `/${path}`}`;
+        try {
+            const res = await fetch(url, options);
+            if (res.status !== 404) return res;
+            lastError = new Error(`404 Not Found: ${url}`);
+        } catch (err) {
+            lastError = err;
+        }
+    }
+    throw lastError;
+};
+
 // Track current team for invite/board creation
 let currentTeamId = null;
 
 // ── Init ──────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('user-name').textContent = user.name;
+    const userNameEl = document.getElementById('user-name');
+    if (userNameEl) {
+        userNameEl.textContent = getDisplayName();
+    }
     loadTeams();
     loadMyTasks();
 });
@@ -44,7 +69,7 @@ function logout() {
 // ── Load Teams ────────────────────────────────────
 async function loadTeams() {
     try {
-        const res  = await fetch(`${API}/teams`, { headers: authHeaders() });
+        const res  = await fetchWithFallback(['/teams', '/api/teams'], { headers: authHeaders() });
         const data = await res.json();
 
         if (!res.ok) {
@@ -67,7 +92,8 @@ function renderTeams(teams) {
     }
 
     grid.innerHTML = teams.map(team => {
-       const myRole = team.members.find(m => m.user._id?.toString() === user.id?.toString())?.role;
+        const currentUserId = user?.id || user?._id;
+        const myRole = team.members.find(m => m.user._id?.toString() === currentUserId?.toString())?.role;
         const isAdmin = myRole === 'admin';
 
         const memberTags = team.members.map(m => `
@@ -100,10 +126,10 @@ function renderTeams(teams) {
 // ── Load My Tasks ─────────────────────────────────
 async function loadMyTasks() {
     try {
-        const res  = await fetch(`${API}/tasks/my`, { headers: authHeaders() });
+        const res  = await fetchWithFallback(['/tasks/my', '/api/tasks/my', '/tasks'], { headers: authHeaders() });
         const data = await res.json();
 
-        if (!res.ok || data.tasks.length === 0) {
+        if (!res.ok || !data.tasks || data.tasks.length === 0) {
             document.getElementById('my-tasks').innerHTML = '<p class="empty-state">No tasks assigned to you yet.</p>';
             return;
         }
@@ -144,7 +170,7 @@ async function createTeam() {
     if (!name) { error.textContent = 'Team name is required'; return; }
 
     try {
-        const res  = await fetch(`${API}/teams`, {
+        const res  = await fetchWithFallback(['/teams', '/api/teams'], {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify({ name, description: desc })
@@ -170,7 +196,7 @@ function confirmDeleteTeam(teamId, teamName) {
 
 async function deleteTeam(teamId) {
     try {
-        const res = await fetch(`${API}/teams/${teamId}`, {
+        const res = await fetchWithFallback([`/teams/${teamId}`, `/api/teams/${teamId}`], {
             method: 'DELETE',
             headers: authHeaders()
         });
@@ -203,7 +229,7 @@ async function inviteMember() {
     if (!email) { error.textContent = 'Email is required'; return; }
 
     try {
-        const res  = await fetch(`${API}/teams/${currentTeamId}/invite`, {
+        const res  = await fetchWithFallback([`/teams/${currentTeamId}/invite`, `/api/teams/${currentTeamId}/invite`], {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify({ email, role })
@@ -242,7 +268,7 @@ async function createBoard() {
 
     if (!name) { error.textContent = 'Board name is required'; return; }
 
-    const res  = await fetch(`${API}/boards`, {
+    const res  = await fetchWithFallback(['/boards', '/api/boards'], {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify({ name, description: desc, teamId: currentTeamId })

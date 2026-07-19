@@ -3,7 +3,12 @@ const API = (() => {
     if (host === 'localhost' || host === '127.0.0.1') {
         return 'http://localhost:5000/api';
     }
-    return 'https://taskmanager-backend.onrender.com/api';
+    return 'https://taskmanager-backend.onrender.com';
+})();
+
+const AUTH_REGISTER_PATH = (() => {
+    const host = window.location.hostname;
+    return host === 'localhost' || host === '127.0.0.1' ? '/auth/register' : '/auth/signup';
 })();
 
 // Redirect if already logged in
@@ -69,7 +74,7 @@ async function register() {
     }
 
     try {
-        const res  = await fetch(`${API}/auth/register`, {
+        const res  = await fetch(`${API}${AUTH_REGISTER_PATH}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password })
